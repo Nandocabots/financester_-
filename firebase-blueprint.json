@@ -1,0 +1,98 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Usuário do sistema financeiro com papel e permissões",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "username": { "type": "string" },
+        "role": { "type": "string", "enum": ["master", "preenchedor"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "username", "role"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Categoria de receitas ou despesas com subcategorias e teto",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["receita", "despesa"] },
+        "color": { "type": "string" },
+        "icon": { "type": "string" },
+        "isDefault": { "type": "boolean" },
+        "monthlyBudget": { "type": "number" },
+        "subcategories": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["id", "name", "type", "color"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "Lançamento de despesa ou receita financeira",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["receita", "despesa"] },
+        "categoryId": { "type": "string" },
+        "subcategory": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "date": { "type": "string" },
+        "monthYear": { "type": "string" },
+        "status": { "type": "string", "enum": ["pago", "pendente"] },
+        "notes": { "type": "string" },
+        "isInstallment": { "type": "boolean" },
+        "installmentCurrent": { "type": "number" },
+        "installmentTotal": { "type": "number" },
+        "installmentSeriesId": { "type": "string" },
+        "isRecurring": { "type": "boolean" },
+        "recurringGroupId": { "type": "string" },
+        "createdById": { "type": "string" }
+      },
+      "required": ["id", "title", "amount", "type", "categoryId", "paymentMethod", "date", "monthYear", "status"]
+    },
+    "FinancialGoal": {
+      "title": "FinancialGoal",
+      "description": "Meta ou caixinha de reserva financeira",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "targetAmount": { "type": "number" },
+        "currentAmount": { "type": "number" },
+        "deadline": { "type": "string" },
+        "color": { "type": "string" },
+        "icon": { "type": "string" },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "title", "targetAmount", "currentAmount", "color"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Coleção de perfis de usuários"
+    },
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/Category" },
+      "description": "Coleção de categorias e subcategorias"
+    },
+    "/transactions/{transactionId}": {
+      "schema": { "$ref": "#/entities/Transaction" },
+      "description": "Coleção de lançamentos financeiros"
+    },
+    "/goals/{goalId}": {
+      "schema": { "$ref": "#/entities/FinancialGoal" },
+      "description": "Coleção de metas e caixinhas"
+    }
+  }
+}

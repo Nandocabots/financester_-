@@ -1,0 +1,147 @@
+{
+  "users": [
+    {
+      "id": "usr-admin",
+      "name": "Administrador",
+      "username": "admin",
+      "role": "master",
+      "passwordHash": "$2a$10$wT8QYmGk6W8L2k6Z1q0xveY8qX3U0eXpQ9M8u9s3B6h8r9g1L3yS2",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "categories": [
+    {
+      "id": "cat-salario",
+      "name": "Salário",
+      "type": "receita",
+      "color": "#86EFAC",
+      "icon": "DollarSign",
+      "isDefault": true,
+      "subcategories": ["Salário Principal", "Adiantamento", "13º Salário", "Férias", "Bônus"]
+    },
+    {
+      "id": "cat-extra",
+      "name": "Renda Extra",
+      "type: "receita",
+      "color": "#99F6E4",
+      "icon": "TrendingUp",
+      "isDefault": true,
+      "subcategories": ["Consultoria & Freela", "Vendas & Desapegos", "Reembolsos", "Outros"]
+    },
+    {
+      "id": "cat-rendimentos",
+      "name": "Rendimentos & Dividendos",
+      "type": "receita",
+      "color": "#93C5FD",
+      "icon": "Coins",
+      "isDefault": true,
+      "subcategories": ["Dividendos", "JCP", "Rendimento CDI/Selic"]
+    },
+    {
+      "id": "cat-alimentacao",
+      "name": "Alimentação",
+      "type": "despesa",
+      "color": "#FCA5A5",
+      "icon": "ShoppingCart",
+      "isDefault": true,
+      "monthlyBudget": 1500,
+      "subcategories": ["Supermercado", "Restaurantes & Bares", "Delivery (iFood)", "Padaria & Café", "Lanches & Confeitaria"]
+    },
+    {
+      "id": "cat-moradia",
+      "name": "Moradia (Aluguel/Contas)",
+      "type": "despesa",
+      "color": "#FED7AA",
+      "icon": "Home",
+      "isDefault": true,
+      "monthlyBudget": 2200,
+      "subcategories": ["Aluguel / Financiamento", "Condomínio", "Energia Elétrica", "Água & Gás", "Internet & TV", "Manutenção & Móveis"]
+    },
+    {
+      "id": "cat-transporte",
+      "name": "Transporte & Combustível",
+      "type": "despesa",
+      "color": "#BAE6FD",
+      "icon": "Car",
+      "isDefault": true,
+      "monthlyBudget": 600,
+      "subcategories": ["Combustível", "Aplicativo (Uber/99)", "Estacionamento & Pedágio", "Manutenção & Seguro", "Passagens Aéreas"]
+    },
+    {
+      "id": "cat-saude",
+      "name": "Saúde & Farmácia",
+      "type": "despesa",
+      "color": "#FBCFE8",
+      "icon": "Activity",
+      "isDefault": true,
+      "monthlyBudget": 400,
+      "subcategories": ["Farmácia & Medicamentos", "Consultas & Terapia", "Exames", "Plano de Saúde", "Academia & Esportes"]
+    },
+    {
+      "id": "cat-lazer",
+      "name": "Lazer & Viagens",
+      "type": "despesa",
+      "color": "#D8B4FE",
+      "icon": "Smile",
+      "isDefault": true,
+      "monthlyBudget": 600,
+      "subcategories": ["Cinema & Eventos", "Bares & Choperias", "Viagens & Hospedagem", "Festas & Passeios"]
+    },
+    {
+      "id": "cat-educacao",
+      "name": "Educação",
+      "type": "despesa",
+      "color": "#C7D2FE",
+      "icon": "BookOpen",
+      "isDefault": true,
+      "monthlyBudget": 500,
+      "subcategories": ["Cursos & Treinamentos", "Livros", "Mensalidades Escola/Faculdade"]
+    },
+    {
+      "id": "cat-assinaturas",
+      "name": "Assinaturas & Serviços",
+      "type": "despesa",
+      "color": "#A7F3D0",
+      "icon": "Tv",
+      "isDefault": true,
+      "monthlyBudget": 250,
+      "subcategories": ["Streaming (Netflix/Spotify)", "Pets (Planopet/Ração)", "Software & Nuvem", "Telefonia Móvel"]
+    },
+    {
+      "id": "cat-vestuario",
+      "name": "Vestuário",
+      "type": "despesa",
+      "color": "#FDA4AF",
+      "icon": "ShoppingBag",
+      "isDefault": true,
+      "monthlyBudget": 350,
+      "subcategories": ["Roupas & Moda", "Calçados", "Acessórios & Cosméticos", "Salão & Beleza"]
+    },
+    {
+      "id": "cat-outros",
+      "name": "Outros Gastos",
+      "type": "despesa",
+      "color": "#CBD5E1",
+      "icon": "MoreHorizontal",
+      "isDefault": true,
+      "monthlyBudget": 400,
+      "subcategories": ["Presentes", "Taxas Bancárias & Impostos", "Diversos"]
+    }
+  ],
+  "transactions": [],
+  "sessions": {},
+  "goals": [
+    {
+      "id": "goal-reserva",
+      "title": "Reserva de Emergência",
+      "targetAmount": 20000,
+      "currentAmount": 5000,
+      "deadline": "2026-12-31",
+      "color": "#10B981",
+      "icon": "ShieldCheck",
+      "category": "Segurança",
+      "createdAt": "2026-01-01T00:00:00.000Z",
+      "notes": "CDB de liquidez diária 100% do CDI"
+    }
+  ]
+}

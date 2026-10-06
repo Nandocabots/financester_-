@@ -1,0 +1,6 @@
+{
+  "name": "Planilha Financeira",
+  "description": "Sistema de gestão financeira pessoal com dashboard anual, metas, módulo de investimentos para iniciantes com juros compostos, teto de orçamento e calendário de vencimentos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,15 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Local Database & Financial Data (Do not publish personal bank records)
+data/db.json
+data/*.sqlite
+data/*.db
+data/backups/
+!data/db.example.json
