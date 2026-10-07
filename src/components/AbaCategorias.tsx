@@ -120,10 +120,6 @@ export const AbaCategorias: React.FC<AbaCategoriasProps> = ({ categories, onRefr
   };
 
   const handleDelete = async (cat: Category) => {
-    if (cat.isDefault) {
-      alert('Categorias padrão do sistema não podem ser removidas.');
-      return;
-    }
     if (window.confirm(`Tem certeza que deseja excluir a categoria "${cat.name}"?`)) {
       try {
         await api.deleteCategory(cat.id);
@@ -189,20 +185,18 @@ export const AbaCategorias: React.FC<AbaCategoriasProps> = ({ categories, onRefr
           <div className="flex items-center space-x-1">
             <button
               onClick={() => handleOpenEdit(cat)}
-              className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-200 rounded-lg transition"
+              className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-200 rounded-lg transition cursor-pointer"
               title="Editar Categoria e Subcategorias"
             >
               <Edit2 className="w-3.5 h-3.5" />
             </button>
-            {!cat.isDefault && (
-              <button
-                onClick={() => handleDelete(cat)}
-                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
-                title="Excluir"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            )}
+            <button
+              onClick={() => handleDelete(cat)}
+              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+              title="Excluir Categoria"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
 
@@ -461,20 +455,39 @@ export const AbaCategorias: React.FC<AbaCategoriasProps> = ({ categories, onRefr
               </div>
 
               {type === 'despesa' && (
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
-                    <span>Teto Orçamentário Mensal (R$)</span>
-                    <span className="text-[10px] text-slate-400 font-normal">Opcional</span>
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={monthlyBudget}
-                    onChange={(e) => setMonthlyBudget(e.target.value)}
-                    placeholder="Ex: 1200,00"
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-rose-400"
-                  />
+                <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-700">
+                      Teto Orçamentário Mensal (R$)
+                    </label>
+                    <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      Opcional
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={monthlyBudget}
+                      onChange={(e) => setMonthlyBudget(e.target.value)}
+                      placeholder="Deixe em branco para sem teto (opcional)"
+                      className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-rose-400 placeholder-slate-400"
+                    />
+                    {monthlyBudget && (
+                      <button
+                        type="button"
+                        onClick={() => setMonthlyBudget('')}
+                        className="px-2.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer"
+                        title="Remover teto desta categoria"
+                      >
+                        Sem Teto
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-slate-400">
+                    Opcional: se não quiser limitar gastos para esta categoria, basta deixar em branco ou clicar em "Sem Teto".
+                  </p>
                 </div>
               )}
 

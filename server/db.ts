@@ -51,7 +51,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     color: '#FCA5A5',
     icon: 'ShoppingCart',
     isDefault: true,
-    monthlyBudget: 1500,
     subcategories: ['Supermercado', 'Restaurantes & Bares', 'Delivery (iFood)', 'Padaria & Café', 'Lanches & Confeitaria']
   },
   {
@@ -61,7 +60,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     color: '#FED7AA',
     icon: 'Home',
     isDefault: true,
-    monthlyBudget: 2200,
     subcategories: ['Aluguel / Financiamento', 'Condomínio', 'Energia Elétrica', 'Água & Gás', 'Internet & TV', 'Manutenção & Móveis']
   },
   {
@@ -71,7 +69,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     color: '#BAE6FD',
     icon: 'Car',
     isDefault: true,
-    monthlyBudget: 600,
     subcategories: ['Combustível', 'Aplicativo (Uber/99)', 'Estacionamento & Pedágio', 'Manutenção & Seguro', 'Passagens Aéreas']
   },
   {
@@ -81,7 +78,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     color: '#FBCFE8',
     icon: 'Activity',
     isDefault: true,
-    monthlyBudget: 400,
     subcategories: ['Farmácia & Medicamentos', 'Consultas & Terapia', 'Exames', 'Plano de Saúde', 'Academia & Esportes']
   },
   {
@@ -91,7 +87,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     color: '#D8B4FE',
     icon: 'Smile',
     isDefault: true,
-    monthlyBudget: 600,
     subcategories: ['Cinema & Eventos', 'Bares & Choperias', 'Viagens & Hospedagem', 'Festas & Passeios']
   },
   {
@@ -101,7 +96,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     color: '#C7D2FE',
     icon: 'BookOpen',
     isDefault: true,
-    monthlyBudget: 500,
     subcategories: ['Cursos & Treinamentos', 'Livros', 'Mensalidades Escola/Faculdade']
   },
   {
@@ -111,7 +105,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     color: '#A7F3D0',
     icon: 'Tv',
     isDefault: true,
-    monthlyBudget: 250,
     subcategories: ['Streaming (Netflix/Spotify)', 'Pets (Planopet/Ração)', 'Software & Nuvem', 'Telefonia Móvel']
   },
   {
@@ -121,7 +114,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     color: '#FDA4AF',
     icon: 'ShoppingBag',
     isDefault: true,
-    monthlyBudget: 350,
     subcategories: ['Roupas & Moda', 'Calçados', 'Acessórios & Cosméticos', 'Salão & Beleza']
   },
   {
@@ -131,7 +123,6 @@ const DEFAULT_CATEGORIES: Category[] = [
     color: '#CBD5E1',
     icon: 'MoreHorizontal',
     isDefault: true,
-    monthlyBudget: 400,
     subcategories: ['Presentes', 'Taxas Bancárias & Impostos', 'Diversos']
   },
 ];
@@ -321,10 +312,6 @@ export class DB {
         parsed.categories.push({ id: 'cat-rendimentos', name: 'Rendimentos & Dividendos', type: 'receita', color: '#93C5FD', icon: 'Coins', isDefault: true });
       }
       parsed.categories.forEach(cat => {
-        if (cat.type === 'despesa' && (cat.monthlyBudget === undefined || cat.monthlyBudget === 0)) {
-          const matchDefault = DEFAULT_CATEGORIES.find(d => d.id === cat.id);
-          cat.monthlyBudget = matchDefault?.monthlyBudget || 500;
-        }
         if (!cat.subcategories || cat.subcategories.length === 0) {
           const matchDefault = DEFAULT_CATEGORIES.find(d => d.id === cat.id);
           cat.subcategories = matchDefault?.subcategories ? [...matchDefault.subcategories] : [];
@@ -345,6 +332,17 @@ export class DB {
             t.paymentMethod = 'crédito';
             hasMigrated = true;
           }
+        }
+      });
+
+      // Ensure users have visible password set for Master
+      parsed.users.forEach(u => {
+        if (!u.password) {
+          if (u.username === 'fernanda.botelho') u.password = '1705';
+          else if (u.username === 'assistente') u.password = '123456';
+          else if (u.username === 'ester.aiolfi') u.password = '1234';
+          else u.password = '123456';
+          hasMigrated = true;
         }
       });
 
@@ -369,7 +367,18 @@ export class DB {
   // --- Users ---
   static getUsers(): User[] {
     const data = this.readData();
-    return data.users.map(({ passwordHash, ...user }) => user);
+    return data.users.map(({ passwordHash, ...user }) => {
+      let pwd = user.password;
+      if (!pwd) {
+        if (user.username === 'fernanda.botelho') pwd = '1705';
+        else if (user.username === 'assistente') pwd = '123456';
+        else if (user.username === 'ester.aiolfi') pwd = '1234';
+      }
+      return {
+        ...user,
+        password: pwd,
+      };
+    });
   }
 
   static getUserByUsername(username: string) {
@@ -391,12 +400,14 @@ export class DB {
     if (existing) {
       throw new Error('Nome de usuário já está em uso.');
     }
+    const plainPassword = user.password || '123456';
     const newUser = {
       id: `usr-${Date.now()}`,
       name: user.name,
       username: user.username,
       role: user.role,
-      passwordHash: bcrypt.hashSync(user.password || '123456', 10),
+      password: plainPassword,
+      passwordHash: bcrypt.hashSync(plainPassword, 10),
       createdAt: new Date().toISOString(),
     };
     data.users.push(newUser);
@@ -419,6 +430,7 @@ export class DB {
     if (updates.name) data.users[idx].name = updates.name;
     if (updates.role) data.users[idx].role = updates.role;
     if (updates.password && updates.password.trim().length > 0) {
+      data.users[idx].password = updates.password;
       data.users[idx].passwordHash = bcrypt.hashSync(updates.password, 10);
     }
 
@@ -480,17 +492,20 @@ export class DB {
     const idx = data.categories.findIndex(c => c.id === id);
     if (idx === -1) throw new Error('Categoria não encontrada.');
     data.categories[idx] = { ...data.categories[idx], ...updates };
+    if (updates.monthlyBudget === 0 || updates.monthlyBudget === null || updates.monthlyBudget === undefined) {
+      delete data.categories[idx].monthlyBudget;
+    }
     this.writeData(data);
     return data.categories[idx];
   }
 
   static deleteCategory(id: string) {
     const data = this.readData();
-    const cat = data.categories.find(c => c.id === id);
-    if (cat?.isDefault) {
-      throw new Error('Categorias padrão do sistema não podem ser removidas.');
+    const idx = data.categories.findIndex(c => c.id === id);
+    if (idx === -1) {
+      throw new Error('Categoria não encontrada.');
     }
-    data.categories = data.categories.filter(c => c.id !== id);
+    data.categories.splice(idx, 1);
     this.writeData(data);
     return true;
   }
