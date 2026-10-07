@@ -141,7 +141,18 @@ function generateInitialSeed(): DBData {
     name: 'Fernanda Botelho',
     username: 'fernanda.botelho',
     role: 'master' as const,
+    password: '1705',
     passwordHash: masterPasswordHash,
+    createdAt: new Date().toISOString(),
+  };
+
+  const esterUser = {
+    id: 'usr-ester',
+    name: 'Ester Aiolfi',
+    username: 'ester.aiolfi',
+    role: 'preenchedor' as const,
+    password: '1234',
+    passwordHash: bcrypt.hashSync('1234', 10),
     createdAt: new Date().toISOString(),
   };
 
@@ -150,6 +161,7 @@ function generateInitialSeed(): DBData {
     name: 'Assistente Financeiro',
     username: 'assistente',
     role: 'preenchedor' as const,
+    password: '123456',
     passwordHash: bcrypt.hashSync('123456', 10),
     createdAt: new Date().toISOString(),
   };
@@ -196,7 +208,7 @@ function generateInitialSeed(): DBData {
   ];
 
   return {
-    users: [masterUser, sampleUser],
+    users: [masterUser, esterUser, sampleUser],
     categories: DEFAULT_CATEGORIES,
     transactions: initialTransactions,
     sessions: {},
@@ -336,6 +348,19 @@ export class DB {
       });
 
       // Ensure users have visible password set for Master
+      if (!parsed.users.some(u => u.username.toLowerCase() === 'ester.aiolfi')) {
+        parsed.users.push({
+          id: 'usr-ester',
+          name: 'Ester Aiolfi',
+          username: 'ester.aiolfi',
+          role: 'preenchedor',
+          password: '1234',
+          passwordHash: bcrypt.hashSync('1234', 10),
+          createdAt: new Date().toISOString(),
+        });
+        hasMigrated = true;
+      }
+
       parsed.users.forEach(u => {
         if (!u.password) {
           if (u.username === 'fernanda.botelho') u.password = '1705';

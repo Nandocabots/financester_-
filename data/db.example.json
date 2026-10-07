@@ -1,11 +1,30 @@
 {
   "users": [
     {
-      "id": "usr-admin",
-      "name": "Administrador",
-      "username": "admin",
+      "id": "usr-fernanda",
+      "name": "Fernanda Botelho",
+      "username": "fernanda.botelho",
       "role": "master",
-      "passwordHash": "$2a$10$wT8QYmGk6W8L2k6Z1q0xveY8qX3U0eXpQ9M8u9s3B6h8r9g1L3yS2",
+      "password": "1705",
+      "passwordHash": "$2b$10$hAJH.ffus4mshRN0D1Z1OekYsh/reH4SM4XLxlb7RLZtPC.tJpArK",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "usr-ester",
+      "name": "Ester Aiolfi",
+      "username": "ester.aiolfi",
+      "role": "preenchedor",
+      "password": "1234",
+      "passwordHash": "$2b$10$NATHvnG4NbC07TjcHlKvPeBVfdXnMfxMXKWvoIUzKCvcvFQhq4SqG",
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "usr-preenchedor",
+      "name": "Assistente Financeiro",
+      "username": "assistente",
+      "role": "preenchedor",
+      "password": "123456",
+      "passwordHash": "$2b$10$pAH3VK0oxN4IZ8y9AHACnu76AGdBz30U75TDGay7Tu74vZigYTX0a",
       "createdAt": "2026-01-01T00:00:00.000Z"
     }
   ],
