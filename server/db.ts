@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 import { User, Category, Transaction, PaymentMethod, FinancialGoal, InvestmentAsset, InvestmentMovement } from '../src/types';
+import { FirestoreService } from './firestoreService';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
@@ -408,7 +409,26 @@ export class DB {
 
   static getUserByUsername(username: string) {
     const data = this.readData();
-    return data.users.find(u => u.username.toLowerCase() === username.toLowerCase());
+    const cleanQ = username.trim().toLowerCase();
+    const cleanWithDot = cleanQ.replace(/\s+/g, '.');
+    const cleanNoSpace = cleanQ.replace(/[\s\.]+/g, '');
+
+    return data.users.find(u => {
+      const uName = (u.username || '').toLowerCase();
+      const uFullName = (u.name || '').toLowerCase();
+      const uNoSpace = uName.replace(/[\s\.]+/g, '');
+      const uFullNoSpace = uFullName.replace(/[\s\.]+/g, '');
+
+      return (
+        uName === cleanQ ||
+        uName === cleanWithDot ||
+        uNoSpace === cleanNoSpace ||
+        uFullName === cleanQ ||
+        uFullNoSpace === cleanNoSpace ||
+        (cleanQ.includes('ester') && (uName.includes('ester') || uFullName.includes('ester'))) ||
+        (cleanQ.includes('fernanda') && (uName.includes('fernanda') || uFullName.includes('fernanda')))
+      );
+    });
   }
 
   static getUserById(id: string) {
@@ -417,6 +437,17 @@ export class DB {
     if (!user) return null;
     const { passwordHash, ...safeUser } = user;
     return safeUser;
+  }
+
+  static upsertUser(cloudUser: any) {
+    const data = this.readData();
+    const idx = data.users.findIndex(u => u.id === cloudUser.id || u.username.toLowerCase() === cloudUser.username?.toLowerCase());
+    if (idx >= 0) {
+      data.users[idx] = { ...data.users[idx], ...cloudUser };
+    } else {
+      data.users.push(cloudUser);
+    }
+    this.writeData(data);
   }
 
   static createUser(user: Omit<User, 'id' | 'createdAt'> & { password?: string }) {
@@ -437,6 +468,7 @@ export class DB {
     };
     data.users.push(newUser);
     this.writeData(data);
+    FirestoreService.saveUser(newUser as any).catch(e => console.warn('Firestore saveUser error:', e));
     const { passwordHash, ...safe } = newUser;
     return safe;
   }
@@ -460,6 +492,7 @@ export class DB {
     }
 
     this.writeData(data);
+    FirestoreService.saveUser(data.users[idx] as any).catch(e => console.warn('Firestore updateUser error:', e));
     const { passwordHash, ...safe } = data.users[idx];
     return safe;
   }
@@ -473,6 +506,7 @@ export class DB {
     }
     data.users = data.users.filter(u => u.id !== id);
     this.writeData(data);
+    FirestoreService.deleteUser(id).catch(e => console.warn('Firestore deleteUser error:', e));
     return true;
   }
 

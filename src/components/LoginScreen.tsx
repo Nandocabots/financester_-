@@ -1,44 +1,38 @@
 import React, { useState } from 'react';
 import { api } from '../lib/api';
 import { User } from '../types';
-import { Wallet, KeyRound, User as UserIcon, AlertCircle, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Wallet, KeyRound, User as UserIcon, AlertCircle, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 interface LoginScreenProps {
   onLoginSuccess: (user: User) => void;
 }
 
 export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
-  const [username, setUsername] = useState('fernanda.botelho');
-  const [password, setPassword] = useState('1705');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
-    try {
-      const result = await api.login(username.trim(), password);
-      onLoginSuccess(result.user);
-    } catch (err: any) {
-      setError(err.message || 'Erro ao efetuar login. Verifique as credenciais.');
-    } finally {
-      setLoading(false);
+    const cleanUsername = username.trim();
+    const cleanPassword = password.trim();
+
+    if (!cleanUsername || !cleanPassword) {
+      setError('Por favor, preencha o usuário e a senha.');
+      return;
     }
-  };
 
-  const handleQuickLogin = async (usr: string, pass: string) => {
-    setUsername(usr);
-    setPassword(pass);
-    setError(null);
     setLoading(true);
 
     try {
-      const result = await api.login(usr, pass);
+      const result = await api.login(cleanUsername, cleanPassword);
       onLoginSuccess(result.user);
     } catch (err: any) {
-      setError(err.message || 'Erro ao efetuar login.');
+      setError(err.message || 'Erro ao efetuar login. Verifique o usuário e a senha digitados.');
     } finally {
       setLoading(false);
     }
@@ -81,10 +75,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
               <input
                 type="text"
                 required
+                autoComplete="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Seu usuário"
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-950/80 border border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl text-sm text-slate-100 placeholder-slate-600 transition"
+                placeholder="Digite seu nome ou usuário"
+                className="w-full pl-9 pr-3 py-2.5 bg-slate-950/80 border border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl text-sm text-slate-100 placeholder-slate-600 transition focus:outline-hidden"
               />
             </div>
           </div>
@@ -98,20 +93,33 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                 <KeyRound className="w-4 h-4" />
               </div>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
+                autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Sua senha"
-                className="w-full pl-9 pr-3 py-2.5 bg-slate-950/80 border border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl text-sm text-slate-100 placeholder-slate-600 transition"
+                placeholder="Digite sua senha"
+                className="w-full pl-9 pr-10 py-2.5 bg-slate-950/80 border border-slate-800 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl text-sm text-slate-100 placeholder-slate-600 transition focus:outline-hidden font-mono"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500 hover:text-slate-300 transition cursor-pointer"
+                title={showPassword ? 'Ocultar senha' : 'Ver senha'}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4 text-emerald-400" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
             </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 font-semibold text-slate-950 text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 disabled:opacity-50"
+            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 font-semibold text-slate-950 text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 disabled:opacity-50 cursor-pointer"
           >
             {loading ? (
               <span>Entrando...</span>
@@ -123,46 +131,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
             )}
           </button>
         </form>
-
-        {/* Quick Demo Access Card */}
-        <div className="mt-8 pt-6 border-t border-slate-800/80">
-          <div className="text-[11px] font-semibold text-slate-400 mb-2.5 uppercase tracking-wider flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-            <span>Acesso Recomendado (Usuário Solicitado)</span>
-          </div>
-
-          <div className="space-y-2">
-            <button
-              type="button"
-              onClick={() => handleQuickLogin('fernanda.botelho', '1705')}
-              className="w-full p-2.5 bg-slate-950/60 border border-amber-500/30 hover:border-amber-500/60 rounded-xl text-left transition flex items-center justify-between group"
-            >
-              <div>
-                <div className="text-xs font-bold text-amber-300 flex items-center gap-1">
-                  fernanda.botelho
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                    Master
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-500">
-                  Senha: <code className="text-slate-300 font-mono">1705</code>
-                </div>
-              </div>
-              <span className="text-xs text-amber-400 group-hover:translate-x-1 transition-transform">
-                Entrar →
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleQuickLogin('assistente', '123456')}
-              className="w-full p-2 bg-slate-950/40 border border-slate-800 hover:border-slate-700 rounded-xl text-left transition flex items-center justify-between text-slate-400 text-xs"
-            >
-              <span>Entrar como Preenchedor (assistente / 123456)</span>
-              <span>→</span>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
