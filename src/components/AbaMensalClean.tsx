@@ -33,6 +33,7 @@ import {
   Sparkles,
   PieChart as PieChartIcon,
   BarChart3,
+  RefreshCw,
   CircleDot,
   ArrowDownCircle,
   ArrowUpCircle,
@@ -408,8 +409,22 @@ export const AbaMensalClean: React.FC<AbaMensalCleanProps> = ({
           </div>
         </div>
 
-        {/* Right Side: Importar Extrato + Gastos Fixos + Export + Inserir Button & Theme Toggle */}
+        {/* Right Side: Atualizar + Importar Extrato + Gastos Fixos + Export + Inserir Button & Theme Toggle */}
         <div className="flex flex-wrap items-center gap-2">
+          {/* Atualizar Dados da Nuvem */}
+          <button
+            onClick={() => fetchMonthData()}
+            className={`px-3 py-2 rounded-xl border transition flex items-center gap-1.5 text-xs font-semibold shrink-0 shadow-2xs cursor-pointer ${
+              isDark
+                ? 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
+                : 'bg-slate-50 text-slate-700 border-slate-200/80 hover:bg-slate-100'
+            }`}
+            title="Sincronizar e recarregar lançamentos em tempo real do Firebase"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-emerald-500' : 'text-slate-500'}`} />
+            <span>Atualizar</span>
+          </button>
+
           {/* Importar Extratos / Faturas (PDF/Texto) */}
           <button
             onClick={() => setIsImportModalOpen(true)}
